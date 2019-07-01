@@ -1,0 +1,15 @@
+{
+  "name": "link-monorepos-badly",
+  "version": "0.1.0",
+  "bin": {
+    "link-monorepos-badly": "./index.js"
+  },
+  "main": "index.js",
+  "repository": "https://github.com/mitchellhamilton/link-monorepos-badly",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^2.4.2",
+    "fs-extra": "^8.1.0",
+    "get-workspaces": "^0.3.1"
+  }
+}

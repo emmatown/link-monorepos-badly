@@ -5,6 +5,9 @@
     "link-monorepos-badly": "./index.js"
   },
   "main": "index.js",
+  "files": [
+    "index.js"
+  ],
   "repository": "https://github.com/mitchellhamilton/link-monorepos-badly",
   "license": "MIT",
   "dependencies": {

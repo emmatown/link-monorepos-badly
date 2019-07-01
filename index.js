@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 let fs = require("fs-extra");
 let path = require("path");
 let chalk = require("chalk");

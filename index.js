@@ -3,8 +3,8 @@ let path = require("path");
 let chalk = require("chalk");
 let getWorkspaces = require("get-workspaces").default;
 
-let foreignMonorepo = path.join(__dirname, "..", "design-system");
-let localMonorepo = __dirname;
+let foreignMonorepo = path.join(__dirname, process.argv[0]);
+let localMonorepo = process.cwd();
 
 let depTypes = ["dependencies", "peerDependencies"];
 

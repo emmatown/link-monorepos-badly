@@ -108,4 +108,9 @@ let depTypes = ["dependencies", "peerDependencies"];
       );
     })
   );
+  if (mode === "unlink") {
+    console.log(
+      "Make sure to reinstall now that the foreign packages have been unlinked!"
+    );
+  }
 })();

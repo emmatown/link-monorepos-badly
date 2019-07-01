@@ -10,7 +10,7 @@ let cmd = process.argv[2];
 const { input } = meow(
   `
     Usage
-      $ link-monorepos-badly [command] [foreign-monorepo]
+      $ link-monorepos-badly [command] [../foreign/monorepo/path]
     Commands
       link         link a foreign monorepo to the local monorepo
       unlink       unlink foreign packages

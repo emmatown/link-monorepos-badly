@@ -3,9 +3,33 @@ let fs = require("fs-extra");
 let path = require("path");
 let chalk = require("chalk");
 let semver = require("semver");
+let meow = require("meow");
 let getWorkspaces = require("get-workspaces").default;
 
-let foreignMonorepo = path.join(process.cwd(), process.argv[2]);
+let cmd = process.argv[2];
+const { input } = meow(
+  `
+    Usage
+      $ link-monorepos-badly [command] [foreign-monorepo]
+    Commands
+      link         link a foreign monorepo to the local monorepo
+      unlink       unlink foreign packages
+    `,
+  {}
+);
+
+if (input[0] !== "link" && input[0] !== "unlink") {
+  console.error(
+    `link-monorepos-badly only supports the \`link\` and \`unlink\` commands, not ${
+      input[0]
+    } `
+  );
+  process.exit(1);
+}
+
+let mode = input[0];
+
+let foreignMonorepo = path.join(process.cwd(), input[1]);
 let localMonorepo = process.cwd();
 
 let depTypes = ["dependencies", "peerDependencies"];
@@ -50,11 +74,14 @@ let depTypes = ["dependencies", "peerDependencies"];
             depName
           );
           await fs.remove(nodeModulesDepDir);
-          await fs.ensureSymlink(
-            foreignWorkspacesMap.get(depName).dir,
-            nodeModulesDepDir
-          );
+          if (mode === "link") {
+            await fs.ensureSymlink(
+              foreignWorkspacesMap.get(depName).dir,
+              nodeModulesDepDir
+            );
+          }
           if (
+            mode === "link" &&
             !semver.satisfies(
               foreignWorkspacesMap.get(depName).config.version,
               depVersion
@@ -68,10 +95,15 @@ let depTypes = ["dependencies", "peerDependencies"];
               )} in the foreign monorepo`
             );
           }
+
           console.log(
-            `🎉 linked ${chalk.green(depName)} into ${chalk.green(
-              workspace.name
-            )}`
+            mode === "link"
+              ? `🎉 linked ${chalk.green(depName)} into ${chalk.green(
+                  workspace.name
+                )}`
+              : `🎉 unlinked ${chalk.green(depName)} from ${chalk.green(
+                  workspace.name
+                )}`
           );
         })
       );

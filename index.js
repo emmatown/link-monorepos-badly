@@ -27,31 +27,37 @@ let depTypes = ["dependencies", "peerDependencies"];
     foreignWorkspacesMap.set(foreignWorkspace.name, foreignWorkspace.dir);
   }
 
-  for (let workspace of localWorkspaces) {
-    let depsToLink = new Set();
-    for (let depType of depTypes) {
-      if (workspace.config[depType]) {
-        for (let depName in workspace.config[depType]) {
-          if (foreignWorkspacesMap.has(depName)) {
-            depsToLink.add(depName);
+  await Promise.all(
+    localWorkspaces.map(workspace => {
+      let depsToLink = new Set();
+      for (let depType of depTypes) {
+        if (workspace.config[depType]) {
+          for (let depName in workspace.config[depType]) {
+            if (foreignWorkspacesMap.has(depName)) {
+              depsToLink.add(depName);
+            }
           }
         }
       }
-    }
-    for (let depName of depsToLink) {
-      console.log(
-        `🎉 linked ${chalk.green(depName)} into ${chalk.green(workspace.name)}`
+      return Promise.all(
+        depsToLink.map(async depName => {
+          let nodeModulesDepDir = path.resolve(
+            workspace.dir,
+            "node_modules",
+            depName
+          );
+          await fs.remove(nodeModulesDepDir);
+          await fs.ensureSymlink(
+            foreignWorkspacesMap.get(depName),
+            nodeModulesDepDir
+          );
+          console.log(
+            `🎉 linked ${chalk.green(depName)} into ${chalk.green(
+              workspace.name
+            )}`
+          );
+        })
       );
-      let nodeModulesDepDir = path.resolve(
-        workspace.dir,
-        "node_modules",
-        depName
-      );
-      await fs.remove(nodeModulesDepDir);
-      await fs.ensureSymlink(
-        foreignWorkspacesMap.get(depName),
-        nodeModulesDepDir
-      );
-    }
-  }
+    })
+  );
 })();

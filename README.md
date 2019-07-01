@@ -26,6 +26,6 @@ bolt link-monorepos-badly unlink ../the/other-monorepo
 bolt
 ```
 
-## What do I mean by badly?
+## What do you mean by badly?
 
 It's quite likely that there will be duplicated dependencies which will especially cause problems with peerDependencies.

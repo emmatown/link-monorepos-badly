@@ -59,7 +59,6 @@ let depTypes = ["dependencies", "peerDependencies"];
         if (workspace.config[depType]) {
           for (let depName in workspace.config[depType]) {
             if (foreignWorkspacesMap.has(depName)) {
-              console.log("added", depName);
               depsToLink.set(depName, workspace.config[depType][depName]);
             }
           }
@@ -79,32 +78,32 @@ let depTypes = ["dependencies", "peerDependencies"];
               foreignWorkspacesMap.get(depName).dir,
               nodeModulesDepDir
             );
-          }
-          if (
-            mode === "link" &&
-            !semver.satisfies(
-              foreignWorkspacesMap.get(depName).config.version,
-              depVersion
-            )
-          ) {
+            if (
+              !semver.satisfies(
+                foreignWorkspacesMap.get(depName).config.version,
+                depVersion
+              )
+            ) {
+              console.error(
+                `⚠️ ${chalk.green(workspace.name)} depends on ${chalk.red(
+                  depName + "@" + depVersion
+                )} but ${chalk.green(depName)} is at ${chalk.green(
+                  foreignWorkspacesMap.get(depName).config.version
+                )} in the foreign monorepo`
+              );
+            }
             console.log(
-              `⚠️ ${chalk.green(workspace.name)} depends on ${chalk.red(
-                depName + "@" + depVersion
-              )} but ${chalk.green(depName)} is at ${chalk.green(
-                foreignWorkspacesMap.get(depName).config.version
-              )} in the foreign monorepo`
+              `🎉 linked ${chalk.green(depName)} into ${chalk.green(
+                workspace.name
+              )}`
+            );
+          } else {
+            console.log(
+              `🎉 unlinked ${chalk.green(depName)} from ${chalk.green(
+                workspace.name
+              )}`
             );
           }
-
-          console.log(
-            mode === "link"
-              ? `🎉 linked ${chalk.green(depName)} into ${chalk.green(
-                  workspace.name
-                )}`
-              : `🎉 unlinked ${chalk.green(depName)} from ${chalk.green(
-                  workspace.name
-                )}`
-          );
         })
       );
     })

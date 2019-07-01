@@ -4,7 +4,7 @@ let path = require("path");
 let chalk = require("chalk");
 let getWorkspaces = require("get-workspaces").default;
 
-let foreignMonorepo = path.join(process.cwd(), process.argv[0]);
+let foreignMonorepo = path.join(process.cwd(), process.argv[2]);
 let localMonorepo = process.cwd();
 
 let depTypes = ["dependencies", "peerDependencies"];
@@ -40,7 +40,7 @@ let depTypes = ["dependencies", "peerDependencies"];
     }
     for (let depName of depsToLink) {
       console.log(
-        `linked ${chalk.green(depName)} into ${chalk.green(workspace.name)}`
+        `🎉 linked ${chalk.green(depName)} into ${chalk.green(workspace.name)}`
       );
       let nodeModulesDepDir = path.resolve(
         workspace.dir,

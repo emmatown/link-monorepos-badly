@@ -1,20 +1,36 @@
 {
   "name": "link-monorepos-badly",
   "version": "0.2.2",
+  "main": "dist/link-monorepos-badly.cjs.js",
   "bin": {
-    "link-monorepos-badly": "./index.js"
+    "link-monorepos-badly": "./bin.js"
   },
-  "main": "index.js",
   "files": [
-    "index.js"
+    "dist",
+    "bin.js"
   ],
   "repository": "https://github.com/mitchellhamilton/link-monorepos-badly",
   "license": "MIT",
   "dependencies": {
+    "@babel/core": "^7.4.5",
+    "@babel/preset-typescript": "^7.3.3",
+    "@babel/runtime": "^7.4.5",
     "chalk": "^2.4.2",
+    "detect-indent": "^6.0.0",
     "fs-extra": "^8.1.0",
     "get-workspaces": "^0.3.1",
     "meow": "^5.0.0",
     "semver": "^6.1.3"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^8.0.0",
+    "@types/meow": "^5.0.0",
+    "@types/node": "^12.0.10",
+    "@types/semver": "^6.0.1",
+    "preconstruct": "^0.0.81",
+    "typescript": "^3.5.2"
+  },
+  "preconstruct": {
+    "source": "src/entry"
   }
 }

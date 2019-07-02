@@ -32,5 +32,8 @@
   },
   "preconstruct": {
     "source": "src/entry"
+  },
+  "scripts": {
+    "prepublishOnly": "preconstruct build"
   }
 }

@@ -60,11 +60,10 @@ let localMonorepo = process.cwd();
     config: localRootPkgJson
   };
 
+  localWorkspaces = localWorkspaces.concat(localRootWorkspace);
+
   if (mode === "upgrade") {
-    await upgrade(
-      localWorkspaces.concat(localRootWorkspace),
-      foreignWorkspaces
-    );
+    await upgrade(localWorkspaces, foreignWorkspaces);
     return;
   }
 

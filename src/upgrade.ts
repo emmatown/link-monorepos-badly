@@ -3,7 +3,8 @@ import semver from "semver";
 import chalk from "chalk";
 import detectIndent from "detect-indent";
 import path from "path";
-import { Workspace, DEPENDENCY_TYPES } from "./constants";
+import { Package } from "@manypkg/get-packages";
+import { DEPENDENCY_TYPES } from "./constants";
 
 function versionRangeToRangeType(versionRange: string): "^" | "~" | "" | null {
   if (versionRange.charAt(0) === "^") return "^";
@@ -15,15 +16,18 @@ function versionRangeToRangeType(versionRange: string): "^" | "~" | "" | null {
 }
 
 export default async function upgrade(
-  localWorkspaces: Workspace[],
-  foreignWorkspaces: Workspace[]
+  localPackages: Package[],
+  foreignPackages: Package[]
 ) {
   let lastestDependencies = new Map<string, string>();
-  for (let workspace of foreignWorkspaces) {
-    lastestDependencies.set(workspace.name, workspace.config.version);
+  for (let workspace of foreignPackages) {
+    lastestDependencies.set(
+      workspace.packageJson.name,
+      workspace.packageJson.version
+    );
   }
-  for (const pkg of localWorkspaces) {
-    const newPkgJSON = { ...pkg.config };
+  for (const pkg of localPackages) {
+    const newPkgJSON = { ...pkg.packageJson };
 
     for (let depType of DEPENDENCY_TYPES) {
       let deps = newPkgJSON[depType];
@@ -40,8 +44,10 @@ export default async function upgrade(
             if (rangeType === null) {
               console.error(
                 `⚠️ could not update ${chalk.green(depName)} in ${chalk.green(
-                  pkg.name
-                )} because ${chalk.green(pkg.name)} depends on ${chalk.red(
+                  pkg.packageJson.name
+                )} because ${chalk.green(
+                  pkg.packageJson.name
+                )} depends on ${chalk.red(
                   depName + "@" + depRange
                 )} in ${chalk.green(
                   depType
@@ -54,7 +60,7 @@ export default async function upgrade(
               console.log(
                 `🎉 updated ${chalk.green(depName)} to ${chalk.green(
                   newRange
-                )} in ${pkg.name}`
+                )} in ${pkg.packageJson.name}`
               );
             }
           }
@@ -62,7 +68,7 @@ export default async function upgrade(
       }
     }
 
-    if (JSON.stringify(newPkgJSON) !== JSON.stringify(pkg.config)) {
+    if (JSON.stringify(newPkgJSON) !== JSON.stringify(pkg.packageJson)) {
       const pkgDir = pkg.dir;
       const pkgJsonPath = path.join(pkgDir, "package.json");
       const pkgJsonRaw = await fs.readFile(pkgJsonPath, "utf-8");
